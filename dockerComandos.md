@@ -39,3 +39,18 @@ DB_USERNAME=practicas_laravel_user # <-- Debe coincidir con POSTGRES_USER de pos
 DB_PASSWORD=root_pass # <-- Debe coincidir con POSTGRES_PASSWORD de postgres/.env
 
 docker compose run --rm artisan install:api
+
+## 5. Comandos adicionales útiles
+
+```bash
+# Ver el estado actual
+git status
+
+# Ver los commits en develop que no están en main
+git log main..develop --oneline
+
+# Ver diferencias entre ramas
+git diff main..develop
+
+# Verificar en qué rama estás
+git branch
