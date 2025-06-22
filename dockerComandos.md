@@ -37,3 +37,5 @@ DB_PORT=5432        # <-- Puerto predeterminado de PostgreSQL
 DB_DATABASE=practicas_laravel_db # <-- Debe coincidir con POSTGRES_DB de postgres/.env
 DB_USERNAME=practicas_laravel_user # <-- Debe coincidir con POSTGRES_USER de postgres/.env
 DB_PASSWORD=root_pass # <-- Debe coincidir con POSTGRES_PASSWORD de postgres/.env
+
+docker compose run --rm artisan install:api
