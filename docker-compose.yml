@@ -1,0 +1,91 @@
+services:
+  # Servidor web Nginx para la API de Practicas Laravel Postgres
+  nginx:
+    build:
+      context: .
+      dockerfile: dockerfiles/nginx.dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - ./servidor:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - php
+      - postgres
+    container_name: practicas_laravel_postgres_nginx # Nombre del contenedor específico
+    networks:
+      - practicas_laravel_postgres_network # Nombre de la red específico
+
+  # Contenedor PHP-FPM para ejecutar la lógica de Laravel
+  php:
+    build:
+      context: .
+      dockerfile: dockerfiles/php.dockerfile
+    volumes:
+      - ./servidor:/var/www/html:delegated
+    container_name: practicas_laravel_postgres_php # Nombre del contenedor específico
+    networks:
+      - practicas_laravel_postgres_network
+
+  # Base de datos PostgreSQL para Practicas Laravel Postgres
+  postgres:
+    image: postgres:13
+    restart: unless-stopped
+    tty: true
+    container_name: practicas_laravel_postgres_db # Nombre del contenedor específico (cambiado a _db para mayor claridad)
+    env_file:
+      - postgres/.env # Asegúrate de que este .env tenga credenciales para tu nuevo proyecto
+    ports:
+      - "5432:5432"
+    networks:
+      - practicas_laravel_postgres_network
+    volumes:
+      - practicas_laravel_postgres_data:/var/lib/postgresql/data # Nombre del volumen específico
+
+  # pgAdmin para administrar la base de datos PostgreSQL
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    container_name: practicas_laravel_postgres_pgadmin # Nombre del contenedor específico
+    depends_on:
+      - postgres
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@practicaslaravel.com # Email más específico del proyecto
+      PGADMIN_DEFAULT_PASSWORD: practicas_admin_password # Contraseña segura y específica
+    networks:
+      - practicas_laravel_postgres_network
+    volumes:
+      - practicas_laravel_postgres_pgadmin_data:/var/lib/pgadmin # Nombre del volumen específico
+
+  # Contenedor para ejecutar Composer para el proyecto
+  composer:
+    build:
+      context: .
+      dockerfile: dockerfiles/composer.dockerfile
+    volumes:
+      - ./servidor:/var/www/html
+    networks:
+      - practicas_laravel_postgres_network
+    container_name: practicas_laravel_postgres_composer # Nombre del contenedor específico
+
+  # Contenedor para ejecutar comandos Artisan de Laravel
+  artisan:
+    build:
+      context: .
+      dockerfile: dockerfiles/php.dockerfile # Usamos el mismo PHP base
+    volumes:
+      - ./servidor:/var/www/html
+    entrypoint: ["php", "/var/www/html/artisan"]
+    networks:
+      - practicas_laravel_postgres_network
+    container_name: practicas_laravel_postgres_artisan # Nombre del contenedor específico
+
+networks:
+  practicas_laravel_postgres_network: # Nombre de la red específico del proyecto
+    driver: bridge
+
+volumes:
+  practicas_laravel_postgres_data: # Volumen nombrado para los datos de PostgreSQL
+  practicas_laravel_postgres_pgadmin_data: # Volumen nombrado para los datos de pgAdmin
