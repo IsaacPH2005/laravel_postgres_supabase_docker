@@ -41,6 +41,13 @@ DB_PASSWORD=root_pass # <-- Debe coincidir con POSTGRES_PASSWORD de postgres/.en
 docker compose run --rm artisan install:api
 docker compose run --rm  composer require laraveles/spanish
 docker compose run --rm artisan vendor:publish --tag=lang
+
+# Instalar el paquete Sanctum
+docker compose run --rm composer require laravel/sanctum
+
+# Publicar configuración de Sanctum
+docker compose run --rm artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+
 ## 5. Comandos adicionales útiles
 
 ```bash
