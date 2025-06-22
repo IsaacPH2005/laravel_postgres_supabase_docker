@@ -39,7 +39,8 @@ DB_USERNAME=practicas_laravel_user # <-- Debe coincidir con POSTGRES_USER de pos
 DB_PASSWORD=root_pass # <-- Debe coincidir con POSTGRES_PASSWORD de postgres/.env
 
 docker compose run --rm artisan install:api
-
+docker compose run --rm  composer require laraveles/spanish
+docker compose run --rm artisan vendor:publish --tag=lang
 ## 5. Comandos adicionales útiles
 
 ```bash
